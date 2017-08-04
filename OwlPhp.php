@@ -21,7 +21,7 @@ class OwlPhp
         if (count($option) > 0) {
             if (isset($option['mysql'])) {
                 $this->db = false;
-                $this->mysql_init($option['mysql']);
+                $this->db_init($option['mysql']);
             }
         }
     }
@@ -37,7 +37,7 @@ class OwlPhp
     /**
      * @param array $option Settings for connection to mysql or postgresql
      */
-    public function mysql_init($option)
+    public function db_init($option)
     {
         $driver   = isset($option['driver']) ? $option['driver'] : 'mysql';
         $host     = isset($option['host']) ? $option['host'] : '127.0.0.1';
