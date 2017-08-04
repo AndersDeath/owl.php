@@ -16,7 +16,7 @@ class OwlPhp
     /**
      * OwlPhp constructor.
      */
-    public function __construct($option)
+    public function __construct($option = [])
     {
         if (count($option) > 0) {
             if (isset($option['mysql'])) {
