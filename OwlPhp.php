@@ -21,7 +21,7 @@ class OwlPhp
         if (count($option) > 0) {
             if (isset($option['mysql'])) {
                 $this->db = false;
-                $this->db_init($option['mysql']);
+                $this->dbInit($option['mysql']);
             }
         }
     }
@@ -37,7 +37,7 @@ class OwlPhp
     /**
      * @param array $option Settings for connection to mysql or postgresql
      */
-    public function db_init($option)
+    public function dbInit($option)
     {
         $driver   = isset($option['driver']) ? $option['driver'] : 'mysql';
         $host     = isset($option['host']) ? $option['host'] : '127.0.0.1';
@@ -57,9 +57,9 @@ class OwlPhp
      * @param string $data Data for select
      * @return result of select
      */
-    public function db_select($sql, $data = [])
+    public function dbSelect($sql, $data = [])
     {
-        if (self::db_connet_test()) {
+        if (self::dbConnectTest()) {
             $stmt = $this->db->prepare($sql);
             $stmt->execute($data);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -71,9 +71,9 @@ class OwlPhp
      * @param string $data Data for insert
      * @return result of insert
      */
-    public function db_insert($sql, $data)
+    public function dbInsert($sql, $data)
     {
-        if (self::db_connet_test()) {
+        if (self::dbConnectTest()) {
             $stmt = $this->db->prepare($sql);
             $stmt->execute($data);
             return $stmt;
@@ -85,9 +85,9 @@ class OwlPhp
      * @param string $data Data for update
      * @return result of update
      */
-    public function db_update($sql, $data)
+    public function dbUpdate($sql, $data)
     {
-        if (self::db_connet_test()) {
+        if (self::dbConnectTest()) {
             $stmt = $this->db->prepare($sql);
             $stmt->execute($data);
             return $stmt;
@@ -95,20 +95,10 @@ class OwlPhp
     }
 
     /**
-     * Connection initialization 
-     */
-    public function db()
-    {
-        if (self::db_connet_test()) {
-            return $this->db;
-        }
-    }
-
-    /**
      * Connection test
      * @return boolean init or not init
      */
-    private function db_connet_test()
+    private function dbConnectTest()
     {
         if (!$this->db) {
             $this->pf(self::MYSQL_CONNECTION_ERROR);
@@ -162,7 +152,7 @@ class OwlPhp
     /**
      * Print on display phpinfo() and exit();
      */
-    public function phpinfo()
+    public function phpInfo()
     {
         phpinfo();
         exit();
