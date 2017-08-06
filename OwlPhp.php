@@ -2,7 +2,7 @@
 
 /**
  * @author VNBStudio.ru <andersdeath@yandex.ru>
- * @version 0.1 alpha
+ * @version 0.2 alpha
  * @package OwlPhp
  * @category OwlPhp
  * @description Helper for simplify work with php
@@ -10,8 +10,9 @@
  */
 class OwlPhp
 {
-    const OWL_ERROR              = "<span style='color:red; font-weight:bold;'>[ERROR]</span> <b>OWL SAY</b>: ";
-    const MYSQL_CONNECTION_ERROR = self::OWL_ERROR."DATABASE NOT INIT";
+    const OWL_ERROR                = "<span style='color:red; font-weight:bold;'>[ERROR]</span> <b>OWL SAY</b>: ";
+    const MYSQL_CONNECTION_ERROR   = self::OWL_ERROR."DATABASE NOT INIT";
+    const JSON_FILE_CREATING_ERROR = self::OWL_ERROR."FILE IS EXIST";
 
     /**
      * OwlPhp constructor.
@@ -101,7 +102,7 @@ class OwlPhp
     private function dbConnectTest()
     {
         if (!$this->db) {
-            $this->pf(self::MYSQL_CONNECTION_ERROR);
+            echo self::MYSQL_CONNECTION_ERROR;
             return false;
         } else {
             return true;
@@ -147,6 +148,29 @@ class OwlPhp
         } else {
             return json_decode($file, true);
         }
+    }
+
+    /**
+     * get json from file
+     * @param string $path Path where you want to create file
+     * @param sting $name Name of file
+     * @param array $data Data to encode
+     * @param array $options Array with options to create
+     * @return json after parse
+     */
+    public function putJsonToFile($path, $name, $data, $options = [])
+    {
+        $fileName = $path."/".$name.".json";
+        if (file_exists($fileName)) {
+            print self::JSON_FILE_CREATING_ERROR;
+            exit();
+        }
+        $permissons = isset($options['permissions']) ? $options['permissions'] : 654;
+        $fp         = fopen($fileName, "w");
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT));
+        fclose($fp);
+        chmod($fileName, $permissons);
+        return file_exists($fileName);
     }
 
     /**
