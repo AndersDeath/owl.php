@@ -178,7 +178,7 @@ class OwlPhp
      * get file form path or url and returns vase64 css string
      * @param string $path Path or Url to image
      * @param array $options Options
-     * @return sting Base64 css sting
+     * @return string Base64 css sting
      */
     public function getBase64ImgCssString($path, $options = [])
     {
@@ -210,7 +210,7 @@ class OwlPhp
     /**
      * get base64File from path
      * @param string $path Path or Url to image
-     * @return sting Base64 css sting
+     * @return array base64 string and info
      */
     public function getBase64File($path)
     {
@@ -227,7 +227,7 @@ class OwlPhp
      * @param string $path Path for file
      * @param string $base64String Base64 string
      * @param array $options Options
-     * @return sting Base64 css sting
+     * @return bool Result
      */
     public function putBase64File($path, $base64String, $options = [])
     {
