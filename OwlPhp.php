@@ -2,17 +2,18 @@
 
 /**
  * @author VNBStudio.ru <andersdeath@yandex.ru>
- * @version 0.2 alpha
+ * @version 0.3 alpha
  * @package OwlPhp
  * @category OwlPhp
- * @description Helper for simplify work with php
+ * @description Library for simplify work with php
  * @copyright Copyright (c) 2017, VNBStudio.ru
  */
 class OwlPhp
 {
-    const OWL_ERROR                = "<span style='color:red; font-weight:bold;'>[ERROR]</span> <b>OWL SAY</b>: ";
-    const MYSQL_CONNECTION_ERROR   = self::OWL_ERROR."DATABASE NOT INIT";
-    const JSON_FILE_CREATING_ERROR = self::OWL_ERROR."FILE IS EXIST";
+    const OWL_ERROR                  = "<span style='color:red; font-weight:bold;'>[ERROR]</span> <b>OWL SAY</b>: ";
+    const MYSQL_CONNECTION_ERROR     = self::OWL_ERROR."DATABASE NOT INIT";
+    const JSON_FILE_CREATING_ERROR   = self::OWL_ERROR."FILE IS EXIST";
+    const BASE64_FILE_CREATING_ERROR = self::OWL_ERROR."FILE IS EXIST";
 
     /**
      * OwlPhp constructor.
@@ -171,6 +172,75 @@ class OwlPhp
         fclose($fp);
         chmod($fileName, $permissons);
         return file_exists($fileName);
+    }
+
+    /**
+     * get file form path or url and returns vase64 css string
+     * @param string $path Path or Url to image
+     * @param array $options Options
+     * @return sting Base64 css sting
+     */
+    public function getBase64ImgCssString($path, $options = [])
+    {
+        if (in_array('fromUrl', $options)) {
+            $curl     = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $path);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $resource = curl_exec($curl);
+            if (!curl_errno($curl)) {
+                $info = curl_getinfo($curl);
+                if ($info["http_code"] == 200) {
+                    $errmsg = "File uploaded successfully";
+                }
+            } else {
+                $errmsg = curl_error($curl);
+            }
+            curl_close($curl);
+            $base64 = base64_encode($resource);
+            $mime   = $info['content_type'];
+            return "data: {$mime};base64, {$base64}";
+        } else {
+            $type         = pathinfo($path, PATHINFO_EXTENSION);
+            $data         = file_get_contents($path);
+            $base64String = 'data:image/'.$type.';base64,'.base64_encode($data);
+            return $base64String;
+        }
+    }
+
+    /**
+     * get base64File from path
+     * @param string $path Path or Url to image
+     * @return sting Base64 css sting
+     */
+    public function getBase64File($path)
+    {
+        $info = pathinfo($path);
+        $data = file_get_contents($path);
+        return [
+            'info' => $info,
+            'base64' => base64_encode($data),
+        ];
+    }
+
+    /**
+     * decode base64 string and put to file
+     * @param string $path Path for file
+     * @param string $base64String Base64 string
+     * @param array $options Options
+     * @return sting Base64 css sting
+     */
+    public function putBase64File($path, $base64String, $options = [])
+    {
+        if (file_exists($path)) {
+            print self::BASE64_FILE_CREATING_ERROR;
+            exit();
+        }
+        $permissons = isset($options['permissions']) ? $options['permissions'] : 654;
+        $fp         = fopen($path, "w");
+        fwrite($fp, base64_decode($base64String));
+        fclose($fp);
+        chmod($path, $permissons);
+        return file_exists($path);
     }
 
     /**
